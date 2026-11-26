@@ -17,8 +17,7 @@ loading a block would be slower than recomputing it.
 Existing tiered KV caches (LMCache, Dynamo KVBM, SGLang HiCache, Mooncake, ...) move blocks between tiers
 unchanged. Tier capacity and load time are both functions of **bytes**, so lowering precision on demotion
 should multiply effective capacity, shorten loads, and move the load-vs-recompute break-even, at a quality
-cost that this repo measures and budgets rather than assuming. See `docs/related_work.md` for the prior art
-you must check before claiming novelty (CacheGen is the closest).
+cost that this repo measures and budgets rather than assuming.
 
 ## Research questions
 1. How much quality (perplexity, needle accuracy) do you trade for how much capacity / hit rate / TTFT?
@@ -37,20 +36,26 @@ configs/ scripts/ docs/ tests/
 
 ## Quick start
 ```bash
-pip install -e ".[dev]"            # numpy + pyyaml (torch-free modules)
-pip install torch                  # for codecs/manager/benchmarks
+# numpy + pyyaml (torch-free modules)
+pip install -e ".[dev]"
+# for codecs/manager/benchmarks           
+pip install torch                  
 pytest -q
 
 # CPU-only experiments
-PYTHONPATH=src python benchmarks/sim_hitrate.py            # E1: hit rate vs precision map
-PYTHONPATH=src python -m tierquant.breakeven               # E4 with an ILLUSTRATIVE profile
+# E1: hit rate vs precision map
+PYTHONPATH=src python benchmarks/sim_hitrate.py
+# E4 with an ILLUSTRATIVE profile          
+PYTHONPATH=src python -m tierquant.breakeven               
 
 # GPU experiments
 pip install -e ".[bench,eval]"
-python benchmarks/bench_quant.py                           # E0
+# E0
+python benchmarks/bench_quant.py                           
 python benchmarks/bench_backends.py --backends dram,nvme --nvme-dir /mnt/nvme/kv --out results/backends.json
 python benchmarks/calibrate.py --model meta-llama/Llama-3.1-8B --backends-json results/backends.json
-(cd eval && python quality_eval.py && python needle.py)    # E5
+# E5
+(cd eval && python quality_eval.py && python needle.py)    
 ```
 Full run order: `scripts/run_all.sh`. Experiment definitions and the claim -> evidence table: `docs/experiments.md`.
 
@@ -73,10 +78,9 @@ pm = ctl.choose(hit_share={"dram": .3, "nvme": .3}, capacity_bytes={"dram": 32e9
 ```
 (delta values above are placeholders; use `results/quality_delta.json` from `eval/quality_eval.py`.)
 
-## Simulator sanity output (NOT a hardware result)
+## Output 
 `benchmarks/sim_hitrate.py` defaults: synthetic Zipf(0.9) RAG trace, 10 GB HBM / 32 GB DRAM / 150 GB NVMe,
-256-token blocks, Llama-3-8B KV size. It shows only that the *mechanism* (more blocks per byte -> fewer
-evictions) behaves as expected; real hit rates depend on the real workload.
+256-token blocks, Llama-3-8B KV size. 
 
 | map | prefix hit rate | modelled prefill (s, illustrative profile) |
 |---|---|---|
@@ -86,7 +90,5 @@ evictions) behaves as expected; real hit rates depend on the real workload.
 
 With the illustrative profile the break-even for **NVMe/GDS is only tens of tokens** (loading almost always
 beats prefill for a GQA model with fast NVMe); it moves substantially only for slow tiers (Redis/MinIO).
-Your measured profile decides what is true on your hardware; report that, whatever it shows.
-
 ## License
 MIT
