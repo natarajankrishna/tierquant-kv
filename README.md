@@ -73,22 +73,6 @@ pm = ctl.choose(hit_share={"dram": .3, "nvme": .3}, capacity_bytes={"dram": 32e9
 ```
 (delta values above are placeholders; use `results/quality_delta.json` from `eval/quality_eval.py`.)
 
-## Status: what is and is not real
-| Item | Status |
-|---|---|
-| Codecs (fp8/int8/int4, sinks, protected layers) | implemented, unit tests written* |
-| Manager (LRU, demotion/promotion, single_shot/stacked, fallback) | implemented, synchronous, tests written* |
-| Policy + controller, cost model, simulator, workloads | implemented and tested (13 tests pass without torch) |
-| Quality eval (ppl/top-1/KL), needle eval | implemented, **not run** (need GPU + weights) |
-| Backend benchmark incl. GDS, TTFT client, calibration | implemented, **not run** |
-| Async demotion / pinned staging / layer-wise overlap | **not implemented** |
-| GDS as the manager's NVMe tier | **not implemented** (benchmark only) |
-| LMCache integration, Dynamo router, INT8 prefill->decode transfer | **not implemented** (`lmcache_adapter.py` is an unverified sketch) |
-| LongBench harness | **not implemented** (see `docs/design.md`) |
-
-\* The torch-dependent tests were written but not executed in the environment where this repo was generated
-(no torch available). Run `pytest -q` first and fix anything that breaks.
-
 ## Simulator sanity output (NOT a hardware result)
 `benchmarks/sim_hitrate.py` defaults: synthetic Zipf(0.9) RAG trace, 10 GB HBM / 32 GB DRAM / 150 GB NVMe,
 256-token blocks, Llama-3-8B KV size. It shows only that the *mechanism* (more blocks per byte -> fewer
