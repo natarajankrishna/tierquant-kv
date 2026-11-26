@@ -1,0 +1,16 @@
+numpy
+pyyaml
+torch>=2.1
+pytest
+# benchmarks
+httpx
+matplotlib
+redis
+minio
+# quality eval
+transformers>=4.40,<4.57
+datasets
+accelerate
+# optional: GPUDirect Storage backend
+# kvikio
+# cupy-cuda12x
