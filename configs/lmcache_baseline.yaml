@@ -1,0 +1,7 @@
+# LMCache baseline: full-precision tiers (GPU prefix cache is vLLM's own).
+# Key names follow LMCache v1 docs at the time of writing -- VERIFY against the version you pin.
+chunk_size: 256
+local_cpu: true
+max_local_cpu_size: 32        # GB
+local_disk: "file:///mnt/nvme/lmcache/"
+max_local_disk_size: 150      # GB

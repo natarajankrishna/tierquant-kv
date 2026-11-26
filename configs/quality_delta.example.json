@@ -1,0 +1,5 @@
+{
+  "_comment": "PLACEHOLDER VALUES, NOT MEASUREMENTS. Overwrite with results/quality_delta.json from eval/quality_eval.py.",
+  "units": "percent perplexity increase",
+  "delta": { "fp16": 0.0, "fp8": 0.3, "int8": 0.1, "int4": 1.5 }
+}

@@ -1,0 +1,19 @@
+# Example configuration for TieredKVManager / simulator. Sizes in GB.
+model:
+  name: meta-llama/Llama-3.1-8B
+  n_layers: 32
+  n_kv_heads: 8
+  head_dim: 128          # kv bytes/token (fp16) = 32*8*128*2*2 = 131072
+block_tokens: 256
+capacity_gb: { hbm: 10, dram: 32, nvme: 150 }
+precision_map:
+  tiers: { hbm: fp16, dram: fp8, nvme: int4 }
+  protect_first_layers: 2
+  sink_tokens: 4
+  key_group: 64          # tokens per group (per-channel key quantisation)
+  value_group: 64        # channels per group (per-token value quantisation)
+requant: single_shot     # single_shot | stacked
+quality_budget:          # QualityBudgetController
+  units: percent_perplexity_increase
+  budget: 1.0
+  delta_table: configs/quality_delta.example.json
